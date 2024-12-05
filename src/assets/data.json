@@ -1,0 +1,16 @@
+{
+    "dependencies": {
+      "cv2": [],
+      "ultralytics": [
+        "YOLO"
+      ],
+      "sys": [],
+      "os": [],
+      "model": [
+        "src/model.py"
+      ],
+      "time": []
+
+    }
+}
+
