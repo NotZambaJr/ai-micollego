@@ -1,4 +1,4 @@
-
+# noinspection PyUnresolvedReferences
 log_active = False
 
 def log(msg):

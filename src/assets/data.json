@@ -1,16 +1,27 @@
 {
-    "dependencies": {
-      "cv2": [],
-      "ultralytics": [
-        "YOLO"
-      ],
-      "sys": [],
-      "os": [],
-      "model": [
-        "src/model.py"
-      ],
-      "time": []
+  "name": "src",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NotZambaJr/ai-micollego.git"
+  },
+  "private": true,
 
-    }
+  "dependencies": {
+    "cv2": [],
+    "ultralytics": [
+      "YOLO"
+    ],
+    "sys": [],
+    "os": [],
+    "time": [],
+    "kagglehub": [],
+    "tracemalloc": []
+  }
 }
 

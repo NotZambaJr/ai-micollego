@@ -1,47 +1,19 @@
-import time
-
-from numpy.ma.core import identity
+from src.dataset import enablePrint
 
 
-class Colors:
-    cyan = '\033[96m'
-    green = '\033[92m'
-    warn = '\033[93m'
-    fail = '\033[91m'
-    end = '\033[0m'
-    bold = '\033[1m'
-    underline = '\033[4m'
-
+# noinspection PyUnresolvedReferences
 class Manager:
+
     def __init__(self):
-        self.dependencies = None
+        self.init = None
 
-
-    def importALL(self, *JSON: str) -> bool:
-        import importlib, json
-        self.dependencies = (json.load(open("assets/data.json")))["dependencies"] \
-            if json.load(open("assets/data.json")) else [JSON]
-
-        if self.dependencies:
-            try:
-                for dependency in self.dependencies:
-                    if self.dependencies[str(dependency)]:
-                        importlib.import_module(str(dependency), self.dependencies[str(dependency)])
-                        print(f"{Colors.cyan}correctly imported {dependency}")
-                    else:
-                        importlib.import_module(str(dependency))
-                        print(f"{Colors.cyan}correctly imported {dependency}")
-            except Exception as e:
-                print(f"Error importing dependency: {e}")
-                return False
-
-        print(f"{Colors.green}{Colors.underline}correctly imported all dependencies")
-
-
-        del self.dependencies
-        return True
-
-
+    @staticmethod
+    def verbose():
+        import sys
+        if "-v" or "verbose" in list(sys.argv):
+            enablePrint()
+        else:
+            disablePrint()
 
     @staticmethod
     def enablePrint():
@@ -52,17 +24,52 @@ class Manager:
         sys.stdout = open(os.devnull, 'w')
 
     @staticmethod
-    def disableWarings():
+    def disableWarnings():
         import warnings
         warnings.filterwarnings('ignore')
 
+class Colors:
+    cyan = '\033[96m'
+    green = '\033[92m'
+    warn = '\033[93m'
+    fail = '\033[91m'
+    end = '\033[0m'
+    bold = '\033[1m'
+    underline = '\033[4m'
+
+
+def importALL(*JSON):
+    import json, importlib
+    if JSON:
+        with open(JSON, 'r') as f:
+            dependencies = json.load(f).get("dependencies", {})
+    else:
+        with open("assets/data.json", 'r') as f:
+            dependencies = json.load(f).get("dependencies", {})
+    global_imports = {}
+    for module, submodules in dependencies.items():
+        try:
+            imported_module = importlib.import_module(module)
+            global_imports[module] = imported_module
+            print(f"{Colors.green}correctly imported:{module}{Colors.end}")
+
+            for submodule in submodules:
+                try:
+                    global_imports[submodule] = getattr(imported_module, submodule)
+                    print(f"{Colors.green}correctly imported:{print} {submodule} from: {imported_module}{Colors.end}")
+                except AttributeError:
+                    print(f"{Colors.fail}Submodule {submodule} not found in {module}")
+        except ImportError as e:
+            print(f"{Colors.fail}Failed to import {module}: {e}")
+    globals().update(global_imports)
+    return global_imports, print(f"{Colors.underline}{Colors.cyan}imported modules: {global_imports}")
+
+def main():
+    manager = Manager()
+    manager.verbose()
+    manager.disableWarnings()
+    importALL()
+main()
 
 
 
-
-manager = Manager()
-manager.disableWarings()
-manager.importALL()
-
-time.sleep(2)
-m = model.Model()
