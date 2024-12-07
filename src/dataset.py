@@ -1,50 +1,86 @@
-class Colors: cyan = '\033[96m'
+# noinspection PyUnres\olvedReferences
+class Dataset:
+    def __init__(self):
+        print("successfully imported class Dataset")
 
+    @staticmethod
+    def getDataset(api_key, workspace, project, v=1, yolo='yolov11'):
+        rf = Roboflow(api_key=str(api_key))
+        project = rf.workspace(str(workspace)).project(str(project))
+        version = project.version(v)
+        dataset = version.download(str(yolo))
+        return dataset
 
-green = '\033[92m'
-warn = '\033[93m'
-fail = '\033[91m'
-end = '\033[0m'
-bold = '\033[1m'
-underline = '\033[4m'
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    def _getImageSize(img) -> int:
+        width = cv2.imread(img).shape[1]
+        return width
 
+    # noinspection PyUnresolvedReferences
+    @staticmethod
+    def generateDataset():
+        cap = cv2.VideoCapture(0)
+        if not cap.isOpened():
+            print(f"failed to open camera")
+        dir = 'datasets'
+        os.makedirs(dir, exist_ok=True)
+        img = 0
+        while img < 20:
+            ret, frame = cap.read()
+            if not ret:
+                print(f"failed to grab frame")
+                break
+            cv2.imshow("current input", frame)
+            key = cv2.waitKey(1) & 0xFF
+            if key%256 == 27:
+                print(f"manually exited from: {dir}/{img}")
+                break
+            elif key%256 == ord('s'):
+                name = os.path.join(dir, f"opencv_frame_{img}.png")
+                cv2.imwrite(name, frame)
+                print(f"frame saved to {name}")
+                img += 1
+        print("images fetched correctly")
 
-class Manager: def
+    #noinspection PyUnresolvedReferences
+    async def updateDataset(self, interval="86400") -> [bool, any]:
+        await self.delete('datasets/base')
+        self.getDataset(
+            self.getParams()['api_key'],
+            self.getParams()['workspace'],
+            self.getParams()['project'],
+            self.getParams()['v'],
+            self.getParams()['yolo']
+            )
+        print("successfully updated dataset")
+        return True, time.sleep(interval)
 
+    #noinspection PyUnresolvedReferences
+    @staticmethod
+    def getParams(*JSON):
+        import json
+        try:
+            if JSON:
+                with open(JSON, 'r') as f:
+                    params = json.load(f).get("roboflow", {})
+            else:
+                with open("assets/data.json", 'r') as f:
+                    params = json.load(f).get("roboflow", {})
+            print("correctly fetched parameters")
+        except Exception as e:
+            print(f"Error importing Params: {e}")
+        return params
 
-main(self) -> None: self.disableWarnings()
-self.importALL()
-m = YOLO("yolo11n.pt")
-print(m)
-
-
-def __init__(self): self.dependencies = None
-
-
-def importALL(self, *JSON: str) -> bool: import importlib, json
-
-
-self.dependencies = (json.load(open("assets/data.json")))["dependencies"] \ if json.load(
-    open("assets/data.json")) else[JSON] if self.dependencies: try: for dependency in self.dependencies: if
-self.dependencies[str(dependency)]: importlib.import_module(str(dependency), self.dependencies[str(dependency)])
-print(f"{Colors.cyan}correctly imported {dependency}") else: importlib.import_module(str(dependency))
-print(f"{Colors.cyan}correctly imported {dependency}") except Exception as e: print(
-    f"{Colors.fail}{Colors.underline}Error importing dependency: {e}")
-return False
-print(f"{Colors.green}{Colors.underline}correctly imported all dependencies")
-del self.dependencies
-return True @ staticmethod
-
-
-def enablePrint(): sys.stdout = sys.__stdout__ @ staticmethod
-
-
-def disablePrint(): sys.stdout = open(os.devnull, 'w') @ staticmethod
-
-
-def disableWarnings(): import warnings
-
-
-warnings.filterwarnings('ignore')
-manager = Manager()
-manager.main()
+    #noinspection PyUnresolvedReferences
+    @staticmethod
+    async def delete(directory_path) -> None:
+        try:
+            files = os.listdir(directory_path)
+            for file in files:
+                file_path = os.path.join(directory_path, file)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+        except OSError:
+            print("Error occurred while deleting files.")
+        return

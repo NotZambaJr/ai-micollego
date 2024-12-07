@@ -1,19 +1,18 @@
-from src.dataset import enablePrint
-
-
 # noinspection PyUnresolvedReferences
+import json, importlib, sys, builtins
+from pathlib import Path
+
 class Manager:
 
     def __init__(self):
         self.init = None
 
-    @staticmethod
-    def verbose():
+    def verbose(self):
         import sys
         if "-v" or "verbose" in list(sys.argv):
-            enablePrint()
+            self.enablePrint()
         else:
-            disablePrint()
+            self.disablePrint()
 
     @staticmethod
     def enablePrint():
@@ -28,48 +27,95 @@ class Manager:
         import warnings
         warnings.filterwarnings('ignore')
 
-class Colors:
-    cyan = '\033[96m'
-    green = '\033[92m'
-    warn = '\033[93m'
-    fail = '\033[91m'
-    end = '\033[0m'
-    bold = '\033[1m'
-    underline = '\033[4m'
+def run_once(f):
+    def wrapper(*args, **kwargs):
+        if not wrapper.has_run:
+            wrapper.has_run = True
+            return f(*args, **kwargs)
+    wrapper.has_run = False
+    return wrapper
 
 
-def importALL(*JSON):
-    import json, importlib
+global_shared_namespace = {}
+
+@run_once
+def importALL(*JSON, base_dir=None, make_global_in=None):
+    # Load dependencies from JSON file
     if JSON:
         with open(JSON, 'r') as f:
             dependencies = json.load(f).get("dependencies", {})
     else:
         with open("assets/data.json", 'r') as f:
             dependencies = json.load(f).get("dependencies", {})
+
     global_imports = {}
+
+    # Add base_dir to sys.path if specified
+    if base_dir:
+        base_dir_path = Path(base_dir).resolve()
+        if str(base_dir_path) not in sys.path:
+            sys.path.append(str(base_dir_path))
+
+    # Process each dependency
     for module, submodules in dependencies.items():
         try:
-            imported_module = importlib.import_module(module)
-            global_imports[module] = imported_module
-            print(f"{Colors.green}correctly imported:{module}{Colors.end}")
+            if module.endswith('.py'):  # Import local files
+                module_path = Path(module).resolve()
+                module_name = module_path.stem
+                spec = importlib.util.spec_from_file_location(module_name, module_path)
+                imported_module = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(imported_module)
+                global_imports[module_name] = imported_module
+                print(f"Successfully imported: {module}")
+            else:  # Import standard or installed packages
+                imported_module = importlib.import_module(module)
+                global_imports[module] = imported_module
+                print(f"Successfully imported: {module}")
 
-            for submodule in submodules:
-                try:
-                    global_imports[submodule] = getattr(imported_module, submodule)
-                    print(f"{Colors.green}correctly imported:{print} {submodule} from: {imported_module}{Colors.end}")
-                except AttributeError:
-                    print(f"{Colors.fail}Submodule {submodule} not found in {module}")
+                # Import specific submodules/functions if defined
+                for submodule in submodules:
+                    try:
+                        global_imports[submodule] = getattr(imported_module, submodule)
+                        print(f"Successfully imported: {submodule} from {module}")
+                    except AttributeError:
+                        print(f"Submodule {submodule} not found in {module}")
         except ImportError as e:
-            print(f"{Colors.fail}Failed to import {module}: {e}")
-    globals().update(global_imports)
-    return global_imports, print(f"{Colors.underline}{Colors.cyan}imported modules: {global_imports}")
+            print(f"Failed to import {module}: {e}")
+        except FileNotFoundError as e:
+            print(f"File {module} not found: {e}")
+
+    # Update the builtins namespace for global access
+    for name, module in global_imports.items():
+        setattr(builtins, name, module)
+
+    print("Successfully imported all modules globally.")
+    return global_imports
+
+def init():
+    manager = Manager()
+    manager.disableWarnings()
+    manager.enablePrint()
+    manager.verbose()
+    importALL(make_global_in="/src")
+    datasets = dataset.Dataset()
+    datasets.updateDataset()
+init()
+
+def threading():
+    _thread1 = threading.Thread(target=main())
+    _thread2 = threading.Thread(target=updateDataset)
+threading()
 
 def main():
-    manager = Manager()
-    manager.verbose()
-    manager.disableWarnings()
-    importALL()
-main()
+    print("main loop")
+    #IN TO DO LIST!
+
+
+
+
+
+
+
 
 
 

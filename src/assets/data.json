@@ -2,7 +2,7 @@
   "name": "src",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.py",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +21,19 @@
     "os": [],
     "time": [],
     "kagglehub": [],
-    "tracemalloc": []
+    "./model.py": [],
+    "./dataset.py": [],
+    "roboflow": [
+      "Roboflow"
+    ],
+    "threading": []
+  },
+
+  "roboflow": {
+    "api_key": "",
+    "workspace" : "",
+    "project": "",
+    "version": "",
+    "yolo": ""
   }
 }
-
