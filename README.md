@@ -1,26 +1,20 @@
 # [**AI-MiCollego**](https://github.com/NotZambaJr/ai-micollego.git)
-A **FREE algorithm** designed to train and utilize a simple graphical interface for YOLO v11. Please use it responsibly, ensuring compliance with any relevant ethical or legal guidelines.
+
+AI-MiCollego is a **FREE algorithm** designed to train and use a simple graphical interface for YOLO v11. Please use it responsibly, ensuring compliance with ethical and legal guidelines.
 
 ---
 
 ## **Imports**
-AI-MiCollego simplifies dependency management by adopting a method similar to the `package.json` format commonly used in web applications. This approach allows for an intuitive and structured way of handling imports.
+
+AI-MiCollego simplifies dependency management with a method similar to `package.json` used in web applications. This approach allows for intuitive and structured handling of dependencies.
 
 ### **Importing Dependencies**
-To import all dependencies defined in a JSON file, use the following command:
-
+To import dependencies from a JSON file, use:
 ```python
 manager.importALL(*JSON)
 ```
 
-This command reads the dependencies from a JSON file and dynamically imports them. 
-
-### **How It Works**
-The `importALL` function allows you to define dependencies in a JSON-like structure, offering flexibility and simplicity in managing your project. 
-
-Here’s an example JSON file:
-
-#### Example: Importing External Packages
+#### Example JSON for External Packages
 ```json
 {
   "dependencies": {
@@ -29,12 +23,8 @@ Here’s an example JSON file:
   }
 }
 ```
-In this example:
-- `numpy` and `pandas` are imported as standard modules.
 
-#### Example: Importing Local Files
-If you want to import a local file located in the `src` folder (e.g., `example.py`), you can specify it like this:
-
+#### Example JSON for Local Files
 ```json
 {
   "dependencies": {
@@ -42,149 +32,107 @@ If you want to import a local file located in the `src` folder (e.g., `example.p
   }
 }
 ```
-This will dynamically import the `example.py` file as a module.
-
----
 
 ### **Advanced Import Options**
-If you need to import specific functions, classes, or submodules, you can define them explicitly in the JSON file:
-
-#### Example: Importing Specific Functions or Classes
-For syntax like:
+For specific imports like:
 ```python
 from your_package import your_function
 ```
-The JSON configuration would look like this:
+Use this JSON structure:
 ```json
 {
   "dependencies": {
-    "your_package": [
-      "your_function"
-    ]
+    "your_package": ["your_function"]
   }
 }
 ```
-This imports only the `your_function` from `your_package`.
 
----
-
-### **Full Flexibility with JSON Files**
-If you want to dynamically load dependencies from a custom JSON file, you can specify the file path as an argument in the `importALL` function:
-
-```python
-manager.importALL(*your_json_file)
-```
-
-#### Default Behavior
-By default, the application looks for a JSON file at:
+### Default Behavior
+By default, the application looks for dependencies in:
 ```
 src/assets/data.json
 ```
-If you don’t want to use this file, ensure it is empty or avoid specifying redundant modules in it.
-
-
-
-##
-##
-##
-##
-
-## **Dataset**
-The `Dataset` class simplifies dataset management by providing tools to download datasets from Roboflow, generate datasets using webcam input, and update datasets asynchronously.
 
 ---
 
-## Key Features
+## **Dataset Management**
 
-1. **Download Datasets**: Fetch datasets from Roboflow with ease.
-2. **Generate Datasets**: Capture and save images using your webcam.
-3. **Update Datasets**: Automatically update datasets and manage old files.
-4. **Parameter Management**: Load and utilize dataset parameters from JSON files.
+The `Dataset` class provides tools for:
+1. **Downloading Datasets**: Fetch datasets from Roboflow.
+2. **Generating Datasets**: Capture images from a webcam.
+3. **Updating Datasets**: Automate dataset updates and cleanups.
+4. **Parameter Management**: Load configuration from JSON files.
 
----
-
-## Methods
+### **Methods**
 
 #### `getDataset(api_key, workspace, project, v=1, yolo='yolov11')`
-**Purpose:** Downloads a dataset from Roboflow.  
-**Parameters:**  
-- `api_key` (str): Your Roboflow API key.  
-- `workspace` (str): Roboflow workspace name.  
-- `project` (str): Project name within the workspace.  
-- `v` (int): Dataset version (default: `1`).  
-- `yolo` (str): Dataset format (default: `'yolov11'`).  
-**Usage:**  
+**Purpose**: Downloads a dataset from Roboflow.  
+**Usage**:
 ```python
-dataset = Dataset.getDataset("your_api_key", "workspace", "project", v=2, yolo="yolov5")
+dataset = Dataset.getDataset("api_key", "workspace", "project", v=1, yolo="yolov11")
 ```
-Before continuing make sure your `Roboflow` credentials are correct:
 
-The JSON configuration would look like this:
-
-
+#### JSON Example for Roboflow Parameters
 ```json
 {
   "roboflow": {
     "api_key": "your_api_key",
-    "workspace" : "your_workspace_name",
-    "project": "your_project_name",
-    "version": 1.0,
-    "yolo": "your_yolo_version"
+    "workspace": "workspace_name",
+    "project": "project_name",
+    "version": 1,
+    "yolo": "yolov11"
+  }
 }
 ```
 
- `default for yolo: yolov11`
-    
+---
 
-### `generateDataset()`
-**Purpose:** Captures images from a webcam and saves them in the `datasets` folder.  
-**Workflow:**  
-- Press `ESC` to exit.  
-- Press `S` to save the current frame.  
-**Usage:**  
+#### `generateDataset()`
+**Purpose**: Captures images from a webcam and saves them in the `datasets` folder.  
+- Press `ESC` to exit.
+- Press `S` to save a frame.  
+**Usage**:
 ```python
 Dataset.generateDataset()
 ```
 
-##
+---
 
-### `updateDataset(interval="86400")`
-**Purpose:** Updates the dataset by deleting old files and downloading a new version. Runs asynchronously.  
-**Parameters:**  
-- `interval` (str): Time (in seconds) before the next update (default: `86400`).  
-**Usage:**  
+#### `updateDataset(interval="86400")`
+**Purpose**: Deletes old files and downloads new datasets asynchronously.  
+**Usage**:
 ```python
 import asyncio
 asyncio.run(Dataset().updateDataset(interval="3600"))
 ```
 
-##
+---
 
-### `getParams(*JSON)`
-**Purpose:** Loads dataset parameters from a JSON file. Defaults to `assets/data.json`.  
-**Usage:**  
+#### `getParams(*JSON)`
+**Purpose**: Loads configuration parameters from a JSON file. Defaults to `assets/data.json`.  
+**Usage**:
 ```python
 params = Dataset.getParams("path/to/config.json")
 ```
 
-##
+---
 
-### `delete(directory_path)`
-**Purpose:** Deletes all files in a specified directory.  
-**Usage:**  
+#### `delete(directory_path)`
+**Purpose**: Deletes all files in a directory.  
+**Usage**:
 ```python
 await Dataset.delete("datasets/base")
 ```
 
 ---
 
-## Example Usage
+### **Example Usage**
 
 ```python
 from dataset import Dataset
 import asyncio
 
-# Initialize Dataset class
+# Initialize Dataset
 d = Dataset()
 
 # Fetch parameters
@@ -199,12 +147,81 @@ dataset = Dataset.getDataset(
     yolo="yolov11"
 )
 
-# Generate a dataset using webcam
+# Generate a dataset using the webcam
 Dataset.generateDataset()
 
-# Update the dataset asynchronously
+# Update datasets asynchronously
 asyncio.run(d.updateDataset("3600"))
 ```
 
 ---
 
+## **YOLO Model Interaction**
+
+AI-MiCollego simplifies interactions with YOLO models, making them more intuitive and user-friendly.
+
+### **Prediction**
+```python
+def predict(
+    self, 
+    model="yolo11n.pt", 
+    stream="webcam", 
+    debug=True
+) -> None:
+```
+**Purpose**: Run object detection using YOLO.  
+- `model`: Path to the YOLO model (default: `yolo11n.pt`).  
+- `stream`: Input source (default: `webcam`; for video: `path/to/video.mp4`).  
+- `debug`: Displays a CV2 dialog window with detection results.  
+
+#### Example Workflow
+A thread captures images for training when a target is detected:
+```python
+self.generateData = threading.Thread(
+    target=self.Dataset.generateDataset,
+    args=cap.read()
+)
+if not self.generateData.is_alive():
+    self.generateData.start()
+elif Events.alredyFetched.is_set():
+    self.generateData.join()
+```
+_Default Limit_: Captures up to 20 images for training.  
+
+#### JSON for Custom Limit
+```json
+{
+  "vars": {
+    "limit": your_custom_limit
+  }
+}
+```
+
+---
+
+### **GetTarget**
+```python
+@staticmethod
+def getTarget(model, target="person"):
+    return model.names[0] == str(target)
+```
+**Purpose**: Checks if the model detects the specified target in the frame.  
+**Returns**: `True` if the target is detected.
+
+---
+
+## **Dependencies**
+
+Install required dependencies:
+```bash
+pip install sympy opencv-python roboflow torch ultralytics 
+```
+
+---
+
+## **Notes**
+- Ensure your `Roboflow` credentials are correct.
+- Configure `cv2` for webcam access if needed.
+- Adjust image limits via the JSON configuration for training flexibility.
+
+--- 

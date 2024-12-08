@@ -6,6 +6,8 @@ class Dataset:
         print("successfully imported class Dataset")
         self.img = 0
         self.processStarted = False
+        with open("assets/data.json", 'r') as f:
+            self.limit = json.load(f).get("vars", {})
 
     @staticmethod
     def getDataset(api_key, workspace, project, v=1, yolo='yolov11'):
@@ -30,7 +32,7 @@ class Dataset:
         _dir = 'local'
         os.makedirs(_dir, exist_ok=True)
         print(self.img)
-        while self.img < 20:
+        while self.img < int(self.limit["limit"]):
             name = os.path.join(_dir, f"opencv_frame_{self.img}.png")
             cv2.imwrite(name, frame)
             print(f"frame saved to {name}")

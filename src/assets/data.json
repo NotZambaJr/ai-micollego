@@ -35,5 +35,8 @@
     "project": "",
     "version": "",
     "yolo": ""
+  },
+  "vars": {
+    "limit": 20
   }
 }
