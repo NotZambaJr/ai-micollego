@@ -1,7 +1,6 @@
 # noinspection PyUnres\olvedReferences
-from manager import Events
-import time
 class Dataset:
+    from manager import Events
     def __init__(self):
         print("successfully imported class Dataset")
         self.img = 0

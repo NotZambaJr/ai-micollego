@@ -1,12 +1,5 @@
-import threading
-from turtledemo.penrose import start
-
-
 # noinspection PyUnresolvedReferences
 class Model:
-    from ultralytics import YOLO
-    import cv2
-    import dataset
     from manager import run_once
 
     def __init__(self):

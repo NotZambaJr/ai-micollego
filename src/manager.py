@@ -93,18 +93,15 @@ def importALL(*JSON, base_dir=None, make_global_in=None):
     print("Successfully imported all modules globally.")
     return global_imports
 
-
 def init():
-    global global_imports, yolo_model
     manager = Manager()
     manager.disableWarnings()
     manager.enablePrint()
     manager.verbose()
     importALL(make_global_in="/src")
-
 init()
+
 def main():
-    import model
     yolo_model = model.Model()
     yolo_model.predict()
 main()
