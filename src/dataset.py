@@ -1,14 +1,21 @@
 # noinspection PyUnres\olvedReferences
+from manager import Events
+import time
 class Dataset:
     def __init__(self):
         print("successfully imported class Dataset")
+        self.img = 0
+        self.processStarted = False
 
     @staticmethod
     def getDataset(api_key, workspace, project, v=1, yolo='yolov11'):
+        Events.isUpdating.set()
         rf = Roboflow(api_key=str(api_key))
         project = rf.workspace(str(workspace)).project(str(project))
         version = project.version(v)
         dataset = version.download(str(yolo))
+        if Events.isUpdating.is_set():
+            Events.isUpdating.clear()
         return dataset
 
     # noinspection PyUnresolvedReferences
@@ -18,30 +25,22 @@ class Dataset:
         return width
 
     # noinspection PyUnresolvedReferences
-    @staticmethod
-    def generateDataset():
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
-            print(f"failed to open camera")
-        dir = 'datasets'
-        os.makedirs(dir, exist_ok=True)
-        img = 0
-        while img < 20:
-            ret, frame = cap.read()
-            if not ret:
-                print(f"failed to grab frame")
-                break
-            cv2.imshow("current input", frame)
-            key = cv2.waitKey(1) & 0xFF
-            if key%256 == 27:
-                print(f"manually exited from: {dir}/{img}")
-                break
-            elif key%256 == ord('s'):
-                name = os.path.join(dir, f"opencv_frame_{img}.png")
-                cv2.imwrite(name, frame)
-                print(f"frame saved to {name}")
-                img += 1
-        print("images fetched correctly")
+    def generateDataset(self, success, frame: any) -> None:
+        Events.alredyFetched.set()
+        _dir = 'local'
+        os.makedirs(_dir, exist_ok=True)
+        print(self.img)
+        while self.img < 20:
+            name = os.path.join(_dir, f"opencv_frame_{self.img}.png")
+            cv2.imwrite(name, frame)
+            print(f"frame saved to {name}")
+            self.img += 1
+            time.sleep(2)
+
+        else:
+            print(f"images alredy fetched: {self.img}")
+            time.sleep(5)
+        return
 
     #noinspection PyUnresolvedReferences
     async def updateDataset(self, interval="86400") -> [bool, any]:
@@ -81,6 +80,7 @@ class Dataset:
                 file_path = os.path.join(directory_path, file)
                 if os.path.isfile(file_path):
                     os.remove(file_path)
+                    Events.alredyFetched.clear()
         except OSError:
             print("Error occurred while deleting files.")
         return

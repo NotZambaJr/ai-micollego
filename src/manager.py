@@ -1,11 +1,12 @@
 # noinspection PyUnresolvedReferences
-import json, importlib, sys, builtins
+import json, importlib, sys, builtins, threading
 from pathlib import Path
 
 class Manager:
 
     def __init__(self):
         self.init = None
+        self.global_shared_namespace = {}
 
     def verbose(self):
         import sys
@@ -27,6 +28,10 @@ class Manager:
         import warnings
         warnings.filterwarnings('ignore')
 
+class Events:
+    isUpdating = threading.Event()
+    alredyFetched = threading.Event()
+
 def run_once(f):
     def wrapper(*args, **kwargs):
         if not wrapper.has_run:
@@ -34,9 +39,6 @@ def run_once(f):
             return f(*args, **kwargs)
     wrapper.has_run = False
     return wrapper
-
-
-global_shared_namespace = {}
 
 @run_once
 def importALL(*JSON, base_dir=None, make_global_in=None):
@@ -91,24 +93,21 @@ def importALL(*JSON, base_dir=None, make_global_in=None):
     print("Successfully imported all modules globally.")
     return global_imports
 
+
 def init():
+    global global_imports, yolo_model
     manager = Manager()
     manager.disableWarnings()
     manager.enablePrint()
     manager.verbose()
     importALL(make_global_in="/src")
-    datasets = dataset.Dataset()
-    datasets.updateDataset()
+
 init()
-
-def threading():
-    _thread1 = threading.Thread(target=main())
-    _thread2 = threading.Thread(target=updateDataset)
-threading()
-
 def main():
-    print("main loop")
-    #IN TO DO LIST!
+    import model
+    yolo_model = model.Model()
+    yolo_model.predict()
+main()
 
 
 

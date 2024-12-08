@@ -1,4 +1,4 @@
-# **AI-MiCollego**
+# [**AI-MiCollego**](https://github.com/NotZambaJr/ai-micollego.git)
 A **FREE algorithm** designed to train and utilize a simple graphical interface for YOLO v11. Please use it responsibly, ensuring compliance with any relevant ethical or legal guidelines.
 
 ---
