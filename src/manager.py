@@ -30,7 +30,7 @@ class Manager:
 
 class Events:
     isUpdating = threading.Event()
-    alredyFetched = threading.Event()
+    alreadyFetched = threading.Event()
 
 def run_once(f):
     def wrapper(*args, **kwargs):

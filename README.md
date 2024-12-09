@@ -176,6 +176,7 @@ def predict(
 
 #### Example Workflow
 A thread captures images for training when a target is detected:
+
 ```python
 self.generateData = threading.Thread(
     target=self.Dataset.generateDataset,
@@ -183,7 +184,7 @@ self.generateData = threading.Thread(
 )
 if not self.generateData.is_alive():
     self.generateData.start()
-elif Events.alredyFetched.is_set():
+elif Events.alreadyFetched.is_set():
     self.generateData.join()
 ```
 _Default Limit_: Captures up to 20 images for training.  

@@ -27,7 +27,7 @@ class Dataset:
 
     # noinspection PyUnresolvedReferences
     def generateDataset(self, success, frame: any) -> None:
-        Events.alredyFetched.set()
+        Events.alreadyFetched.set()
         _dir = 'local'
         os.makedirs(_dir, exist_ok=True)
         print(self.img)
@@ -81,7 +81,7 @@ class Dataset:
                 file_path = os.path.join(directory_path, file)
                 if os.path.isfile(file_path):
                     os.remove(file_path)
-                    Events.alredyFetched.clear()
+                    Events.alreadyFetched.clear()
         except OSError:
             print("Error occurred while deleting files.")
         return

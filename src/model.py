@@ -36,14 +36,14 @@ class Model:
                     results = self.yolo_model(self.frame, verbose=False)
                     annotated_frame = results[0].plot()
 
-                    if Events.alredyFetched.is_set() is False & self.getTarget(self.yolo_model):
+                    if Events.alreadyFetched.is_set() is False & self.getTarget(self.yolo_model):
                         self.generateData = threading.Thread(
                             target=self.Dataset.generateDataset,
                             args=cap.read()
                         )
                         if self.generateData.is_alive() is False:
                             self.generateData.start()
-                        elif Events.alredyFetched.is_set() is True:
+                        elif Events.alreadyFetched.is_set() is True:
                             self.generateData.join()
 
                     cv2.imshow("YOLO Inference", annotated_frame) if debug else None
